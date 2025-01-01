@@ -114,7 +114,7 @@
     <div id="pointer"></div>
     <div id="roulette">
       <div class="sector">特賞</div>
-      <div class="sector"></div>
+      <div class="sector">VIP</div>
       <div class="sector">1000円OFF</div>
       <div class="sector">500円OFF</div>
     </div>
@@ -175,7 +175,7 @@
         resultDiv.textContent = `結果: ${selectedPrize.name}`;
 
         const basePath = "https://osasimigohan.github.io/osasimitaberu/coupon.html"; // リポジトリURL
-        if (selectedPrize.name.includes("特賞") || selectedPrize.name.includes("1等")) {
+        if (selectedPrize.name.includes("特賞") {
           window.location.href = `${basePath}/coupon.html?prize=${encodeURIComponent(selectedPrize.name)}`;
         }
       }, 4000);
