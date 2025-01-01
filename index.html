@@ -144,6 +144,14 @@
 
     let hasSpun = false;
 
+    // Load prize from localStorage if it exists
+    const savedPrize = localStorage.getItem('savedPrize');
+    if (savedPrize) {
+      resultDiv.textContent = `結果: ${savedPrize}`;
+      hasSpun = true;
+      startButton.disabled = true;
+    }
+
     startButton.addEventListener("click", () => {
       if (hasSpun) {
         resultDiv.textContent = "ルーレットは一度しか回せません。";
@@ -173,14 +181,14 @@
         roulette.style.transform = `rotate(-${selectedPrize.angle}deg)`;
 
         resultDiv.textContent = `結果: ${selectedPrize.name}`;
+        localStorage.setItem('savedPrize', selectedPrize.name); // Save prize to localStorage
 
-        const basePath = "https://osasimigohan.github.io/osasimitaberu/coupon.html"; // リポジトリURL
-        if (selectedPrize.name.includes("特賞") {
+        const basePath = "https://osasimigohan.github.io/osasimitaberu"; // 修正されたURL
+        if (selectedPrize.name.includes("特賞")) {
           window.location.href = `${basePath}/coupon.html?prize=${encodeURIComponent(selectedPrize.name)}`;
         }
       }, 4000);
     });
-    
   </script>
 </body>
 </html>
