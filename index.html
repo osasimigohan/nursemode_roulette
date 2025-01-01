@@ -185,7 +185,7 @@
         resultDiv.textContent = `結果: ${selectedPrize.name}`;
         localStorage.setItem('savedPrize', selectedPrize.name); // Save prize to localStorage
 
-        const basePath = "https://osasimigohan.github.io/osasimitaberu"; // Updated URL
+        const basePath = location.origin + location.pathname.replace(/\/[^/]*$/, ""); // Ensure basePath is correct
         if (selectedPrize.name.includes("特賞")) {
           window.location.href = `${basePath}/coupon.html?prize=${encodeURIComponent(selectedPrize.name)}`;
         }
