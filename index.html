@@ -206,7 +206,8 @@
 
       const random = Math.random();
       let cumulativeProbability = 0;
-      let selectedPrize = prizes[prizes.length - 1]; // Default to the last prize
+      let selectedPrize = prizes.find(prize => prize.name.includes('5等')); // Default to 5等
+
 
       for (const prize of prizes) {
         cumulativeProbability += prize.probability;
