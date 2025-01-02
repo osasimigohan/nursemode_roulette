@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ナースモード♡新春お年玉ルーレット</title>
+  <title>確率UP!ナースモード♡新春お年玉ルーレット</title>
   <style>
     @import url('https://fonts.googleapis.com/earlyaccess/reepokakukana.css');
 
@@ -100,61 +100,110 @@
       text-shadow: 2px 2px 0 #FFF;
       text-align: center;
     }
+    #coupon {
+      margin-top: 20px;
+      padding: 20px;
+      border: 2px dashed #FF1493;
+      background-color: #FFF0F5;
+      text-align: center;
+      display: none;
+    }
+    #coupon-code {
+      font-size: 24px;
+      color: #FF69B4;
+      font-weight: bold;
+    }
+    #coupon-instructions {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #FF69B4;
+    }
   </style>
 </head>
 <body>
-  <h1>ナースモード♡新春お年玉ルーレット</h1>
+  <h1>確率UP!ナースモード♡新春お年玉ルーレット</h1>
   <div id="roulette-container">
     <div id="pointer"></div>
     <div id="roulette">
       <div class="sector">特賞</div>
-      <div class="sector">一等</div>
-      <div class="sector">二等</div>
-      <div class="sector">三等</div>
+      <div class="sector">VIP</div>
+      <div class="sector">1000円OFF</div>
+      <div class="sector">500円OFF</div>
     </div>
   </div>
   <button id="start-button">スタート💉</button>
   <div id="result"></div>
-
+  <div id="coupon">
+    <div id="coupon-code"></div>
+    <div id="coupon-instructions">この画面をスクリーンショットで保存してください！<br>次回来店時にスクリーンショットの提示でクーポンご利用可能です♪</div>
+  </div>
   <script>
     const prizes = [
-      { name: '特賞', angle: 0 },
-      { name: '一等', angle: 90 },
-      { name: '二等', angle: 180 },
-      { name: '三等', angle: 270 }
+      { name: '特賞 VIPルームサービス＆次回本指名セット料金無料♡', angle: 0, probability: 0.005 },
+      { name: '1等 VIPルームサービス♡', angle: 90, probability: 0.1 },
+      { name: '2等 お会計1000円OFF♡', angle: 180, probability: 0.2 },
+      { name: '3等 お会計500円OFF♡', angle: 270, probability: 0.65 },
     ];
 
     const roulette = document.getElementById("roulette");
     const startButton = document.getElementById("start-button");
     const resultDiv = document.getElementById("result");
+    const couponDiv = document.getElementById("coupon");
+    const couponCodeDiv = document.getElementById("coupon-code");
 
     let hasSpun = false;
+
+    function generateCouponCode() {
+      return Math.floor(100 + Math.random() * 900).toString(); // Generate a 3-digit code
+    }
+
+    async function saveCouponCode(code) {
+      const blob = new Blob([`クーポンコード: ${code}\n`], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'coupon_codes.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
     startButton.addEventListener("click", () => {
       if (hasSpun) {
         resultDiv.textContent = "ルーレットは一度しか回せません。";
         return;
       }
-
+      
       hasSpun = true;
       startButton.disabled = true;
       resultDiv.textContent = "";
 
-      const randomIndex = Math.floor(Math.random() * prizes.length);
-      const selectedPrize = prizes[randomIndex];
-      const randomDegrees = selectedPrize.angle + 3600; // 最低10回転してから停止
+      const random = Math.random();
+      let cumulativeProbability = 0;
+      let selectedPrize = prizes[prizes.length - 1]; // Default to the last prize
 
+      for (const prize of prizes) {
+        cumulativeProbability += prize.probability;
+        if (random < cumulativeProbability) {
+          selectedPrize = prize;
+          break;
+        }
+      }
+
+      const randomDegrees = selectedPrize.angle + 3600; // Minimum 10 spins
       roulette.style.transition = "transform 4s ease-out";
       roulette.style.transform = `rotate(-${randomDegrees}deg)`;
-
+      
       setTimeout(() => {
         roulette.style.transition = "none";
         roulette.style.transform = `rotate(-${selectedPrize.angle}deg)`;
 
         resultDiv.textContent = `結果: ${selectedPrize.name}`;
 
-        if (selectedPrize.name === '特賞') {
-          window.location.href = `coupon.html?prize=${encodeURIComponent(selectedPrize.name)}`;
+        if (selectedPrize.name.includes("特賞") || selectedPrize.name.includes("4等")) {
+          const couponCode = generateCouponCode();
+          couponCodeDiv.textContent = `クーポンコード: ${couponCode}`;
+          couponDiv.style.display = "block";
+          saveCouponCode(couponCode);
         }
       }, 4000);
     });
